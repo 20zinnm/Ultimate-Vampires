@@ -1,0 +1,24 @@
+name: uVampires
+version: 0.1
+main: uVampires.UVampires
+commands:
+  vampires:
+    usage: /vampires
+permissions:
+    uvampires.*:
+        description: Gives access to all uVampires commands!
+        children:
+            uvampires.add: true
+            uvampires.remove: true
+            uvampires.sacrifice: true
+    uvampires.add:
+        description: Allows you to make someone a vampire.
+        default: false
+    uvampires.remove:
+        description: Allows you to make revoke someone's vampire status.
+        default: false
+    uvampires.sacrifice:
+        description: Allows you to make a sacrifice to the gods and revoke your vampire status.
+        default: true
+          
+            
