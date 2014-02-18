@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-public class uVampiresCommandExecuter implements CommandExecutor {
+public class UVCommandExecuter implements CommandExecutor {
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (cmd.getName().equalsIgnoreCase("vampires")) {
@@ -18,15 +18,11 @@ public class uVampiresCommandExecuter implements CommandExecutor {
 				if (args.length < 1) {
 					sender.sendMessage("-=uVampires=-");
 					sender.sendMessage("/vampires sacrifice: sacrifice a diamond to the gods to become normal!");
-					if (sender.hasPermission("uvampires.add")) {
-						sender.sendMessage("/vampires add: Make someone a vampire!");
-					}
-					if (sender.hasPermission("uvampires.remove")) {
-						sender.sendMessage("/vampires remove: Make someone normal again!");
-					}
+					if (sender.hasPermission("uvampires.add")) sender.sendMessage("/vampires add: Make someone a vampire!");
+					if (sender.hasPermission("uvampires.remove")) sender.sendMessage("/vampires remove: Make someone normal again!");
 					return true;
 				}
-				if (args.length > 2) {
+				if (args.length > 3) {
 					sender.sendMessage("Too many arguments!");
 					return false;
 				}
@@ -37,7 +33,7 @@ public class uVampiresCommandExecuter implements CommandExecutor {
 					UVampires.vampires.put(p, true);
 					p.sendMessage(ChatColor.DARK_AQUA + "You are now a vampire!");
 					sender.sendMessage(ChatColor.DARK_AQUA + p.getName() + " is now a vampire!");
-				}
+				} else return false;
 			}
 			if (args[0].equalsIgnoreCase("remove") && sender.hasPermission("uvampires.remove")) {
 				if (Bukkit.getServer().getPlayer(args[0]) != null) {
@@ -45,7 +41,7 @@ public class uVampiresCommandExecuter implements CommandExecutor {
 					UVampires.vampires.put(p, false);
 					p.sendMessage(ChatColor.DARK_AQUA + "You are no longer a vampire!");
 					sender.sendMessage(ChatColor.DARK_AQUA + p.getName() + " is no longer a vampire.");
-				}
+				} else return false;
 			}
 			if (args[0].equalsIgnoreCase("sacrifice") && sender.hasPermission("uvampires.sacrifice")) {
 				String pS = sender.getName();

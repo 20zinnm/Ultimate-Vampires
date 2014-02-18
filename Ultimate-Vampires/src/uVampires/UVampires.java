@@ -1,15 +1,20 @@
 package uVampires;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.HashMap;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
 
 public class UVampires extends JavaPlugin {
 	
@@ -17,10 +22,11 @@ public class UVampires extends JavaPlugin {
 	
 	public void onEnable() {
 		saveDefaultConfig();
+		getCommand("vampires").setExecutor(new UVCommandExecuter());
 		String path = getDataFolder() + File.separator + "vampires.bin";
 		File file = new File(path);
 		if(file.exists()) {
-			vampires = load(path);
+			vampires = UVLoad.load(path);
 			getLogger().info("uVampires v0.1 enabled!");
 		} else {
 			getLogger().info("Vampires storage file missing... creating a new one.");
@@ -32,44 +38,45 @@ public class UVampires extends JavaPlugin {
 				getLogger().warning("Please report the following errors to the BukkitDev page:");
 				e.printStackTrace();
 				getLogger().info("Intimidating spam :P.");
+				for (Player p : Bukkit.getServer().getOnlinePlayers()) {
+					if (p.isOp()) {
+						ItemStack is = new ItemStack(Material.DIAMOND, 1);
+						p.setItemInHand(is);
+						ItemMeta im = p.getItemInHand().getItemMeta();
+						im.setDisplayName(ChatColor.RED + "Sorry about the error! --UltimateVampires");
+					}
+				}
 			}
-		}
+			this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new  Runnable(){
+				public void run(){
+				  for (Player p : getServer().getOnlinePlayers()) {
+					  if (UVampires.vampires.containsKey(p)) {
+							Boolean bool = UVampires.vampires.get(p);
+							if (bool) {
+					            Location l = p.getLocation();     
+					            Location blockbellowplayer = new Location(l.getWorld(), l.getX(), l.getY() - 1, l.getZ());
+					            if (blockbellowplayer != null) {
+					            	int lightlevel = blockbellowplayer.getBlock().getLightLevel();
+					            	while (lightlevel < 7) {
+					            		p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 1, 2));
+					            		p.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 1, 2));
+					            		p.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, 1, 2));
+					            	}
+					            	while (lightlevel >= 7) {
+					            		p.setFireTicks(1);
+					            	}
+					            }
+							}
+						}
+				  	} 
+				  }
+				}, 20, 20);
+			}
 	}
 	
 	public void onDisable() {
-		save(vampires, getDataFolder() + File.separator + "vampires.bin");
+		UVSave.save(vampires, (getDataFolder() + File.separator + "vampires.bin"));
 		saveConfig();
-	}
-	
-	public void save(HashMap<Player, Boolean> map, String path)
-	{
-		try
-		{
-			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path));
-			oos.writeObject(vampires);
-			oos.flush();
-			oos.close();
-		}
-		catch(Exception e)
-		{
-				e.printStackTrace();
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	public HashMap<Player, Boolean> load(String path)
-	{
-		try
-		{
-			@SuppressWarnings("resource")
-			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(path));
-			Object result = ois.readObject();
-			return (HashMap<Player, Boolean>)result;
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-		return null;
+		
 	}
 }
