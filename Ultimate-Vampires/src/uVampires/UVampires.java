@@ -14,7 +14,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.potion.PotionType;
 
 public class UVampires extends JavaPlugin {
 	
@@ -27,7 +26,7 @@ public class UVampires extends JavaPlugin {
 		File file = new File(path);
 		if(file.exists()) {
 			vampires = UVLoad.load(path);
-			getLogger().info("uVampires v0.1 enabled!");
+			getLogger().info("uVampires v0.2 enabled!");
 		} else {
 			getLogger().info("Vampires storage file missing... creating a new one.");
 			try {
@@ -77,6 +76,6 @@ public class UVampires extends JavaPlugin {
 	public void onDisable() {
 		UVSave.save(vampires, (getDataFolder() + File.separator + "vampires.bin"));
 		saveConfig();
-		
+		getLogger().info("UVampires v0.2 disabled!");
 	}
 }
