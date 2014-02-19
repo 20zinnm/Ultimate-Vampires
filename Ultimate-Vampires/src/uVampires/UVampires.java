@@ -78,4 +78,9 @@ public class UVampires extends JavaPlugin {
 		saveConfig();
 		getLogger().info("UVampires v0.2 disabled!");
 	}
+	
+	public void reload() {
+		vampires = UVLoad.load(getDataFolder() + File.separator + "vampires.bin");
+		reloadConfig();
+	}
 }
